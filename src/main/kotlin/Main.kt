@@ -1,6 +1,7 @@
 package es.iesraprog2425.pruebaes
 
 import es.iesraprog2425.pruebaes.app.Calculadora
+import es.iesraprog2425.pruebaes.data.db.Dataobject
 import es.iesraprog2425.pruebaes.ui.Consola
 import java.math.RoundingMode
 
@@ -28,8 +29,25 @@ fun main() {
 */
 
 fun main() {
-    //Calculadora(Consola()).iniciar()
-    Calculadora(Consola()).pedirArgumentosInicialesEIniciar()
+//   Creacion de la tabla, comentada para que no salte el error de que ya existe
+//    val sql =
+//    "CREATE TABLE Operaciones (\n" +
+//        "id IDENTITY PRIMARY KEY,\n" +
+//        "num1 DOUBLE NOT NULL,\n" +
+//        "operador VARCHAR(10) NOT NULL,\n" +
+//        "num2 DOUBLE NOT NULL,\n" +
+//        "resultado DOUBLE\n" +
+//    ");"
+//
+//
+//    Dataobject.getDataSource().connection.use { conn ->
+//        conn.createStatement().use { stmt ->
+//            stmt.execute(sql)
+//        }
+//    }
+
+    Calculadora(Consola()).iniciar()
+    //Calculadora(Consola()).pedirArgumentosInicialesEIniciar()
 }
 
 

@@ -1,16 +1,16 @@
 package es.iesraprog2425.pruebaes.data.dao
 
-import es.iesraprog2425.pruebaes.model.Operaciones
+import es.iesraprog2425.pruebaes.model.Operacion
 
 interface ILogsDAO {
 
-    fun getAll(): List<Operaciones>
+    fun getAll(): List<Operacion>
 
-    fun getById(id: Int): Operaciones?
+    fun getById(id: Int): Operacion?
 
-    fun add(producto: Operaciones)
+    fun add(producto: Operacion)
 
-    fun update(producto: Operaciones, id: Int)
+    fun update(producto: Operacion, id: Int)
 
     fun delete(id: Int)
 

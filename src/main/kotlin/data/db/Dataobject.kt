@@ -7,7 +7,7 @@ import javax.sql.DataSource
 object Dataobject {
     fun getDataSource(): DataSource {
         val config = HikariConfig().apply {
-            jdbcUrl = "jdbc:h2:./Logs/Operaciones"
+            jdbcUrl = "jdbc:h2:./Logs/Operaciones;AUTO_SERVER=TRUE"
             username = "sa"
             password = ""
             driverClassName = "org.h2.Driver"
