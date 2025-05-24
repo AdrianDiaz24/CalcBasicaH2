@@ -4,7 +4,7 @@ import es.iesraprog2425.pruebaes.data.db.Dataobject
 import es.iesraprog2425.pruebaes.model.Operacion
 import es.iesraprog2425.pruebaes.model.Operadores
 
-class LogsDAO: ILogsDAO {
+class OperacionDAO: IOperacionDAO {
     override fun getAll(): List<Operacion> {
         val operaciones = mutableListOf<Operacion>()
         Dataobject.getDataSource().connection.use { connection ->

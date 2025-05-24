@@ -1,12 +1,12 @@
 package es.iesraprog2425.pruebaes.app
 
-import es.iesraprog2425.pruebaes.data.dao.LogsDAO
+import es.iesraprog2425.pruebaes.data.dao.IOperacionDAO
 import es.iesraprog2425.pruebaes.model.Operacion
 import es.iesraprog2425.pruebaes.model.Operadores
 import es.iesraprog2425.pruebaes.redondear
 import es.iesraprog2425.pruebaes.ui.IEntradaSalida
 
-class Calculadora(private val ui: IEntradaSalida, private val logsDAO: LogsDAO = LogsDAO()) {
+class Calculadora(private val ui: IEntradaSalida, private val operacionDAO: IOperacionDAO) {
 
     fun pedirNumero(): Double{
         var valorValido = false
@@ -75,7 +75,7 @@ class Calculadora(private val ui: IEntradaSalida, private val logsDAO: LogsDAO =
                         val num2 = inputs[3].toDouble()
                         val resultado = realizarCalculo(num1, operador, num2)
                         ui.mostrar("$num1 ${operador.simbolos[0]} $num2 = ${resultado.redondear(2)}")
-                        logsDAO.add(Operacion(num1 = num1, operador = operador, num2 = num2, resultado = resultado.redondear(2)))
+                        operacionDAO.add(Operacion(num1 = num1, operador = operador, num2 = num2, resultado = resultado.redondear(2)))
                     } catch (e: Exception) {
                         println("**UNEXPECTED ERROR** $e")
                     } catch (e: InfoCalcException) {
@@ -97,13 +97,13 @@ class Calculadora(private val ui: IEntradaSalida, private val logsDAO: LogsDAO =
         do {
             try {
                 ui.mostrar("--- Antiguas operaciones ---")
-                logsDAO.getAll().forEach { println(it) }
+                operacionDAO.getAll().forEach { println(it) }
                 ui.limpiarPantalla(2)
                 ui.mostrar("--- CALCULADORA ---")
                 val (numero1, operador, numero2) = pedirInfo()
                 val resultado = realizarCalculo(numero1, operador, numero2)
                 ui.mostrar("$numero1 ${operador.simbolos[0]} $numero2 = ${resultado.redondear(2)}")
-                logsDAO.add(Operacion(num1 = numero1, operador = operador, num2 = numero2, resultado = resultado.redondear(2)))
+                operacionDAO.add(Operacion(num1 = numero1, operador = operador, num2 = numero2, resultado = resultado.redondear(2)))
             } catch (e: NumberFormatException) {
                 ui.mostrarError(e.message ?: "Se ha producido un error!")
             }

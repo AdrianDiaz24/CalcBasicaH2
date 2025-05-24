@@ -2,7 +2,7 @@ package es.iesraprog2425.pruebaes.data.dao
 
 import es.iesraprog2425.pruebaes.model.Operacion
 
-interface ILogsDAO {
+interface IOperacionDAO {
 
     fun getAll(): List<Operacion>
 
