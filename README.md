@@ -45,3 +45,54 @@ También se sobrescribe la función `toString` para que, al realizar un `print`,
 
 4. Creacion de la interfaz para los logs de las operaciones
 
+````kotlin
+interface IOperacionDAO {
+
+    fun getAll(): List<Operacion>
+
+    fun getById(id: Int): Operacion?
+
+    fun add(producto: Operacion)
+
+    fun update(producto: Operacion, id: Int)
+
+    fun delete(id: Int)
+
+}
+````
+ En esta interfaz declaramos solo los metodos que se desarrollaran en la clase que herede de esta interfaz
+
+5. Creacion de la clase para los logs de las operaciones
+
+````kotlin
+class OperacionDAO: IOperacionDAO
+````
+
+Como podemos ver esta clase hera de la interfaz anterior y es donde se desarrollan los metodos implementado en la misma, voy a esplicar principalmente las funciones `getAll()` y `add()` que son la mas utilizadas en este programa
+
+````kotlin
+override fun getAll(): List<Operacion> {
+        val operaciones = mutableListOf<Operacion>()
+        Dataobject.getDataSource().connection.use { connection ->
+            connection.prepareStatement("SELECT * FROM Operaciones").use { stmt ->
+                val resultados = stmt.executeQuery()
+                while (resultados.next()){
+                    operaciones.add(
+                        Operacion(
+                            id = resultados.getInt("id"),
+                            num1 = resultados.getDouble("num1"),
+                            operador = Operadores.getOperador(resultados.getString("operador")),
+                            num2 = resultados.getDouble("num2"),
+                            resultado = resultados.getDouble("resultado")
+                        )
+                    )
+                }
+            }
+        }
+        return operaciones
+    }
+````
+Este es el metodo getAll() que devuelve una lista que contiene todas las operaciones realizadas por el usuario.
+
+
+
