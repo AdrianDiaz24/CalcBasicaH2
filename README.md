@@ -2,7 +2,7 @@
 
 ### Resumen
 
-Este proyecto toma como base la calculadora desarrollada en el tema anterior con logs basados en archivos .txt. A partir de esta base, se han eliminado inicialmente todas las clases y funciones configuradas para esos logs, y se han añadido al archivo `build.gradle.kts` las dependencias necesarias para usar H2 y el pool de conexiones con Hikari. La carpeta `data` se ha dividido en otras dos carpetas: `dao` y `db`. En la primera, se ha creado la interfaz para los logs con DAO y la clase que gestiona los logs; en la segunda, se ha añadido el `DataObject`, que contiene la función para obtener un `DataSource`. Posteriormente, se ha creado la `data class` Operacion en el modelo, que será la encargada de almacenar la información de las operaciones, tanto para obtener los registros como para subir nuevas operaciones. Finalmente, en la clase `Calculadora` de la carpeta `app`, se ha implementado la funcionalidad para subir las nuevas operaciones con cada cálculo realizado, además de modificar algunos aspectos del código que se explicarán más adelante.
+Este proyecto toma como base la calculadora desarrollada en el tema anterior con logs basados en archivos .txt. A partir de esta base, se eliminaron inicialmente todas las clases y funciones configuradas para esos logs, y se añadieron al archivo `build.gradle.kts` las dependencias necesarias para usar H2 y el pool de conexiones con Hikari. La carpeta `data` se dividió en otras dos carpetas: `dao` y `db`. En la primera, se creó la interfaz para los logs con DAO y la clase que gestiona los logs; en la segunda, se añadió el `DataObject`, que contiene la función para obtener un `DataSource`. Posteriormente, se creó la `data class` Operacion en el modelo, encargada de almacenar la información de las operaciones, tanto para obtener los registros como para subir nuevas operaciones. Finalmente, en la clase `Calculadora` de la carpeta `app`, se implementó la funcionalidad para subir las nuevas operaciones con cada cálculo realizado, además de modificar algunos aspectos del código que se explicarán más adelante.
 
 ### Explicación paso a paso
 
@@ -28,7 +28,7 @@ object DataObject {
     }
 }
 ````
-Se utiliza un `object` ya que es un patrón Singleton, una clase que no necesita ser instanciada para ser utilizada y que es accesible por todo el programa. De esta forma, cualquier clase de tipo DAO que gestione la información a añadir en la base de datos puede solicitar un `DataSource` en este objeto para usarlo.
+Se utiliza un `object`, ya que es un patrón Singleton, una clase que no necesita ser instanciada para ser utilizada y que es accesible en todo el programa. De esta forma, cualquier clase de tipo DAO que gestione la información para añadir a la base de datos puede solicitar un `DataSource` en este objeto para usarlo.
 
 #### 3. Crear la `data class` Operacion, que se encargará tanto de almacenar los datos que se subirán a la base de datos como de contener la información obtenida de esta para ser mostrada.
 
@@ -39,7 +39,7 @@ data class Operacion(val id: Int = 0, val num1: Double, val operador: Operadores
     }
 }
 ````
-Como se observa, la `data class` contiene los datos que se almacenan: `num1`, `operador`, `num2` y `resultado`. Además, el campo `id: Int = 0` permite guardar el valor de la columna `id` en la base de datos, que es autoincremental, logrando así que, al mostrar el contenido, las operaciones estén numeradas y no sea necesario especificar manualmente el ID al realizar una operación.
+Como se observa, la `data class` contiene los datos que se almacenan: `num1`, `operador`, `num2` y `resultado`. Además, el campo `id: Int = 0` permite guardar el valor de la columna `id` en la base de datos, que es autoincremental. Esto permite que, al mostrar el contenido, las operaciones estén numeradas y no sea necesario especificar manualmente el ID al realizar una operación.
 
 También se sobrescribe la función `toString` para que, al realizar un `print`, el contenido se muestre automáticamente en el formato deseado.
 
@@ -60,7 +60,7 @@ interface IOperacionDAO {
 
 }
 ````
- En esta interfaz declaramos solo los metodos que se desarrollaran en la clase que herede de esta interfaz
+ En esta interfaz declaramos solo los métodos que se desarrollarán en la clase que herede de esta interfaz.
 
 #### 5. Creacion de la clase para los logs de las operaciones
 
@@ -96,13 +96,13 @@ override fun getAll(): List<Operacion> {
 El método `getAll()` es responsable de devolver una lista que contiene todas las operaciones almacenadas en la base de datos. El funcionamiento es el siguiente:
 
 1. Utiliza el objeto `Dataobject` para acceder al pool de conexiones. 
-2. Llamando al método `getDataSource()` del `DataObject` obtiene un `DataSource`.
+2. Llamando al método `getDataSource()` del `DataObject`, obtiene un `DataSource`.
 3. Se prepara la consulta SQL `SELECT * FROM Operaciones` a través de un `PreparedStatement`. 
-4. Despues se ejecuta el Statement con el metodo ``executeQuery()`` almacenando lo que devuelve en un `val` llamado resultado.
+4. Después, se ejecuta el Statement con el método ``executeQuery()``, almacenando lo que devuelve en un `val` llamado resultado.
     - Funciona como si fuera un cursor, que ejecuta una consulta y te devuelve la informacion almacenada para poder ser usada en vez de mostralo solamente
-5. Los resultados de la consulta se recorren con un bucle `while`, con el ``resultado.next()`` que pasa a la siguiente fila almacenada y devuelve un `true` lo cual permite que continue el bucle hasta que no queden mas fila que devolvera un `false`.
+5. Los resultados de la consulta se recorren con un bucle `while`, con el ``resultado.next()``, que pasa a la siguiente fila almacenada y devuelve un `true`, lo cual permite que continúe el bucle hasta que no queden más filas, devolviendo un `false`.
 6. Por cada fila obtenida de los resultados:
-    - Se crea una instancia de `Operacion` con sus campos (`id`, `num1`, `operador`, `num2`, `resultado`) con los datos de las columnas de la tabla.
+    - Se crea una instancia de `Operacion` con sus campos (`id`, `num1`, `operador`, `num2`, `resultado`), utilizando los datos de las columnas de la tabla.
     - Esta instancia se agrega a una lista mutable (`operaciones`) que acumula todas las operaciones encontradas en la tabla.
 7. Finalmente, se devuelve la lista `operaciones` con todas las instancias creadas.
 
@@ -120,7 +120,7 @@ override fun add(operacion: Operacion) {
     }
 ````
 
-El método `add()` cumple con la funcionalidad de insertar una nueva operación en la base de datos basada en la informacion guardad en la data class `Operacion`. El funcionamiento es el siguiente: 
+El método `add()` cumple con la funcionalidad de insertar una nueva operación en la base de datos basada en la información guardada en la data class `Operacion`. El funcionamiento es el siguiente: 
 
 1. Obtiene una conexión al pool de conexiones usando el `Dataobject` y su método `getDataSource()`.
 2. Crea un `PreparedStatement` configurado con la consulta SQL `INSERT INTO Operaciones(num1, operador, num2, resultado)`.
@@ -176,7 +176,6 @@ El método `iniciar()` es el que comienza el bucle del funcionamiento hasta que 
 6. **Almacenamiento de la operación:**
    - Crea una nueva instancia de la clase `Operacion` con los operandos, el operador, y el resultado (redondeado a dos decimales usando el método `redondear()`).
    - La nueva operación se almacena en la base de datos utilizando el método `add()` de `OperacionDAO`.
-
 7. **Control de errores:**
    - El método tiene `try-catch` para manejar excepciones del tipo `NumberFormatException`. Si ocurre un error, se muestra un mensaje claro al usuario.
 
@@ -190,6 +189,6 @@ Tambien se refactoriza el metodo `pedirNumero()` para que sea mas facil entender
 
 ### Posibles mejoras a implementar
 
-1. Implementar un menu para ademas de realizar las operaciones, poder mostrar el registro entero, solo por ID, borrar por ID y Borrar todo el historial
+1. Implementar un menú para, además de realizar las operaciones, poder mostrar el registro completo, buscar solo por ID, borrar por ID y borrar todo el historial.
 2. Añadir un metodo ``getAllWithLimit()`` para usar cuando vayamos a calcular una operacion salgan antes solo las ultimas 3-5 operaciones realizadas, ya que sino cuando llevemos 50 sera una lista enorme, la idea es que la consulta sea ``SELECT * FROM Operaciones ORDER ID ASC LIMIT 5``
-3. Cuando la base de datos este llena de operaciones tal vez se quiera borrar el historial, para esto crearia un metodo ``inicializarBD()`` que con un ``DROP TABLE IF EXIST``  y ``CREATE TABLE`` la eliminaria y la crearia la misma tabla pero vacia
+3. Cuando la base de datos esté llena de operaciones, tal vez se quiera borrar el historial. Para ello, se podría crear un método ``inicializarBD()``, que use un ``DROP TABLE IF EXISTS`` y un ``CREATE TABLE`` para eliminar y crear la misma tabla, pero vacía.
