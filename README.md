@@ -190,3 +190,6 @@ Tambien se refactoriza el metodo `pedirNumero()` para que sea mas facil entender
 
 ### Posibles mejoras a implementar
 
+1. Implementar un menu para ademas de realizar las operaciones, poder mostrar el registro entero, solo por ID, borrar por ID y Borrar todo el historial
+2. Añadir un metodo ``getAllWithLimit()`` para usar cuando vayamos a calcular una operacion salgan antes solo las ultimas 3-5 operaciones realizadas, ya que sino cuando llevemos 50 sera una lista enorme, la idea es que la consulta sea ``SELECT * FROM Operaciones ORDER ID ASC LIMIT 5``
+3. Cuando la base de datos este llena de operaciones tal vez se quiera borrar el historial, para esto crearia un metodo ``inicializarBD()`` que con un ``DROP TABLE IF EXIST``  y ``CREATE TABLE`` la eliminaria y la crearia la misma tabla pero vacia
