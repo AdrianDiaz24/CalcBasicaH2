@@ -133,3 +133,60 @@ El método `add()` cumple con la funcionalidad de insertar una nueva operación 
 
 
 #### 6. Refactorizamos la clase `Calculadora` para que deje de usar la logica para logs basado en archivos y lo haga usando la base de datos
+
+````kotlin
+fun iniciar() {
+        do {
+            try {
+                ui.mostrar("--- Antiguas operaciones ---")
+                operacionDAO.getAll().forEach { println(it) }
+                ui.limpiarPantalla(2)
+                ui.mostrar("--- CALCULADORA ---")
+                val (numero1, operador, numero2) = pedirInfo()
+                val resultado = realizarCalculo(numero1, operador, numero2)
+                ui.mostrar("$numero1 ${operador.simbolos[0]} $numero2 = ${resultado.redondear(2)}")
+                operacionDAO.add(Operacion(num1 = numero1, operador = operador, num2 = numero2, resultado = resultado.redondear(2)))
+            } catch (e: NumberFormatException) {
+                ui.mostrarError(e.message ?: "Se ha producido un error!")
+            }
+        } while (ui.preguntar())
+        ui.limpiarPantalla()
+    }
+````
+
+El método `iniciar()` es el que comienza el bucle del funcionamiento hasta que se desee salir:
+
+1. **Inicio del bucle de la calculadora:**
+   - El método utiliza un bucle `do-while` que permite al usuario realizar varias operaciones mientras no desee salir.
+
+2. **Mostrar las antiguas operaciones:**
+   - Antes de iniciar un nuevo cálculo, el sistema muestra por consola todas las operaciones previamente almacenadas en la base de datos.
+   - Para esto, llama al método `getAll()` de la clase `OperacionDAO`, recorriendo las operaciones y mostrándolas en consola.
+
+3. **Interfaz del usuario:**
+   - Muestra un encabezado indicando el inicio de la calculadora con el método `ui.mostrar()`, y limpia la pantalla entre pasos usando el método `ui.limpiarPantalla()`.
+
+4. **Obtención de datos para la operación:**
+   - Llama al método `pedirInfo()`, que devuelve los operandos y el operador ingresados por el usuario. Este valor se desestructura en las variables: `numero1`, `operador`, y `numero2`.
+
+5. **Realización del cálculo:**
+   - Utiliza el método `realizarCalculo()` pasando como parámetros los datos ingresados.
+   - El resultado obtenido del cálculo es mostrado en pantalla junto con la operación realizada, en un formato claro y legible.
+
+6. **Almacenamiento de la operación:**
+   - Crea una nueva instancia de la clase `Operacion` con los operandos, el operador, y el resultado (redondeado a dos decimales usando el método `redondear()`).
+   - La nueva operación se almacena en la base de datos utilizando el método `add()` de `OperacionDAO`.
+
+7. **Control de errores:**
+   - El método tiene `try-catch` para manejar excepciones del tipo `NumberFormatException`. Si ocurre un error, se muestra un mensaje claro al usuario.
+
+8. **Continuar o salir:**
+   - Al final de cada iteración, usa el método `ui.preguntar()` para consultar al usuario si desea realizar otra operación. El bucle continuará mientras la respuesta sea afirmativa.
+   - Antes de finalizar el método, se limpia la pantalla con el método `ui.limpiarPantalla()`.
+
+Este método se encarga de gestionar todo el flujo operativo de la calculadora, integrando las funcionalidades de la lógica principal, la interacción con el usuario y la persistencia de datos en la base de datos.
+
+Tambien se refactoriza el metodo `pedirNumero()` para que sea mas facil entenderlo y se refactoriza levemente el metodo `pedirInfo()`
+
+### Posibles mejoras a implementar
+

@@ -58,7 +58,6 @@ class Calculadora(private val ui: IEntradaSalida, private val operacionDAO: IOpe
 
     fun pedirArgumentosInicialesEIniciar(){ // Esta funcion esta creada para una cosa que pedia la calculado con logs en .txt que entendi mal, aunque lo he refactorizado para que funcione prefiero no usarla
 
-        var ruta: String
         ui.mostrar("--- CALCUALDORA ---")
         ui.mostrar("Introduce los argumentos (Opcional)")
         ui.mostrar("Intrucciones \n- Introduzca el 1º Nº, el operador y el 2º Nº separado por espacios \n- En caso de no querer introducirlo pulse intro")
@@ -67,7 +66,6 @@ class Calculadora(private val ui: IEntradaSalida, private val operacionDAO: IOpe
         if (argumentos.isNotBlank()) {
             if (argumentos.split(" ").size == 3) {
                 val inputs = argumentos.split(" ")
-                    ruta = inputs[0]
                     try {
                         val num1 = inputs[1].toDouble()
                         val operador = Operadores.getOperador(inputs[2].firstOrNull().toString())
