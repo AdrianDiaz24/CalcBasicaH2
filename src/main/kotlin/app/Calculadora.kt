@@ -16,7 +16,7 @@ class Calculadora(private val ui: IEntradaSalida, private val operacionService: 
             Operadores.DIVISION -> numero1 / numero2
         }
 
-    fun iniciar() {
+    fun iniciar() { // Funcion refactorizada y ampliada actualizar el punto 6 del README.md
         var salida = false
         do {
             try {
