@@ -182,29 +182,35 @@ El método `iniciar()` es el que comienza el bucle del funcionamiento hasta que 
 1. **Inicio del bucle de la calculadora:**
    - El método utiliza un bucle `do-while` que permite al usuario realizar varias operaciones mientras no desee salir.
 
-2. **Mostrar las antiguas operaciones:**
-   - Antes de iniciar un nuevo cálculo, el sistema muestra por consola todas las operaciones previamente almacenadas en la base de datos.
-   - Para esto, llama al método `getAll()` de la clase `OperacionDAO`, recorriendo las operaciones y mostrándolas en consola.
+2. **Mostrar el menú:**
+   - Se llama al método ``mostrarMenu()`` de la clase ``Consola()`` que recibe un ``Array<String>`` con cada línea del menú y la muestra cada una debajo de la anterior.
 
-3. **Interfaz del usuario:**
-   - Muestra un encabezado indicando el inicio de la calculadora con el método `ui.mostrar()`, y limpia la pantalla entre pasos usando el método `ui.limpiarPantalla()`.
+3. **Elección de la opción**
+   - Se llama al método `pedirNumeroConLimites()` de la clase ``Consola()``, al cual se le pasa el valor mínimo posible y el máximo posible, y devuelve el número elegido por el usuario.
 
-4. **Obtención de datos para la operación:**
-   - Llama al método `pedirInfo()`, que devuelve los operandos y el operador ingresados por el usuario. Este valor se desestructura en las variables: `numero1`, `operador`, y `numero2`.
 
-5. **Realización del cálculo:**
-   - Utiliza el método `realizarCalculo()` pasando como parámetros los datos ingresados.
-   - El resultado obtenido del cálculo es mostrado en pantalla junto con la operación realizada, en un formato claro y legible.
+4. **Posibles elecciones y su explicación**
+   1. Realizar operación: 
+      1. Se llama al método ``mostrar()`` de la ``Consola()`` que muestra un mensaje informando que se te van a mostrar las anteriores operaciones.
+      2. Se llama al método ``getAllWithLimit()`` del `OperacionService`, que te devuelve un ``List`` con las últimas 5 operaciones, y las muestra por pantalla.
+      3. Desde la ``Consola()`` se llama al método ``limpiarPantalla()``, que de forma predeterminada muestra en pantalla 20 saltos de línea (en este caso son 2), y se muestra a continuación con el método ``mostrar()`` un mensaje que informa que empieza la calculadora.
+      4. Con el método ``pedirInfo()`` te piden que introduzcas tanto el num1 como el num2 y el operador, y te lo devuelve en un ``Triple<Double, Operador, Double>``. 
 
-6. **Almacenamiento de la operación:**
-   - Crea una nueva instancia de la clase `Operacion` con los operandos, el operador, y el resultado (redondeado a dos decimales usando el método `redondear()`).
-   - La nueva operación se almacena en la base de datos utilizando el método `add()` de `OperacionDAO`.
-7. **Control de errores:**
-   - El método tiene `try-catch` para manejar excepciones del tipo `NumberFormatException`. Si ocurre un error, se muestra un mensaje claro al usuario.
+      5. Ahora se llama a la función ``realizarCalculo()``, que esta sí se encuentra en la propia clase de la ``Calculadora()``, al que se le pasan los valores obtenidos anteriormente, y con un ``when()`` y el operador se realiza una operación u otra, siendo devuelto el resultado.
+      6. Se vuelve a llamar al ``mostrar()``, que te muestra por pantalla el ``num1`` seguido del 1.º símbolo del ``Operador()``, el ``num2`` y el ``resultado``, siendo este último redondeado con una función de extensión del ``Double`` hecha a nivel superior.
+      7. Por último, desde ``operacionService()`` se llama al método ``add()``, al que se le da una data class ``Operacion()`` con los datos que se han mostrado por pantalla, y se suben a la base de datos.
 
-8. **Continuar o salir:**
-   - Al final de cada iteración, usa el método `ui.preguntar()` para consultar al usuario si desea realizar otra operación. El bucle continuará mientras la respuesta sea afirmativa.
-   - Antes de finalizar el método, se limpia la pantalla con el método `ui.limpiarPantalla()`.
+   2. Mostrar operaciones anteriores
+      1. Se muestra con el método ``mostrar()`` un mensaje informando que se van a mostrar todas las operaciones realizadas. 
+      2. Desde la clase ``OperacionService()`` se llama al método ``getAll()``, que devuelve una ``List<Operacion>``, y muestra por pantalla todas ellas.
+   3. Eliminar una operación de la base de datos
+      1. Se muestra en pantalla un mensaje que informa que esta parte es para borrar una operación y otro para pedirle al usuario que ingrese una ID.
+      2. Desde la ``Consola()`` se vuelve a llamar al ``pedirNumeroConLimites()``, con el 1 como mínimo posible y el máximo se calcula con el ``.size`` de la lista que te devuelve el ``getAll()`` del ``OperacionService()``.
+      3. Desde ``OperacionService()``, se llama al método ``delete()``, y se le pasa la ID, eliminando de la base de datos esa operación.
+   4.  Borrar todo el historial de operaciones
+         - Esta función con lo de borrar historial lo que hace en realidad es borrar la tabla y volver a crearla
+       1. Llama al método ``inicializarTabla()`` de ``OperacionService()``, el cual borra y crea nuevamente la tabla.
+       2. Si la operación anterior no ha dado problemas, se muestra en pantalla un mensaje informando que se ha borrado el historial correctamente.
 
 Este método se encarga de gestionar todo el flujo operativo de la calculadora, integrando las funcionalidades de la lógica principal, la interacción con el usuario y la persistencia de datos en la base de datos.
 
@@ -213,5 +219,5 @@ Tambien se refactoriza el metodo `pedirNumero()` para que sea mas facil entender
 ### Posibles mejoras a implementar
 
 1. Implementar un menú para, además de realizar las operaciones, poder mostrar el registro completo, buscar solo por ID, borrar por ID y borrar todo el historial.
-2. Añadir un metodo ``getAllWithLimit()`` para usar cuando vayamos a calcular una operacion salgan antes solo las ultimas 3-5 operaciones realizadas, ya que sino cuando llevemos 50 sera una lista enorme, la idea es que la consulta sea ``SELECT * FROM Operaciones ORDER ID ASC LIMIT 5``
+2. Añadir un metodo ``getAllWithLimit()`` para usar cuando vayamos a calcular una operacion salgan antes solo las ultimas 3-5 operaciones realizadas, ya que sino cuando llevemos 50 sera una lista enorme, la idea es que la consulta sea ``SELECT * FROM Operaciones ORDER ID DESC LIMIT 5``
 3. Cuando la base de datos esté llena de operaciones, tal vez se quiera borrar el historial. Para ello, se podría crear un método ``inicializarBD()``, que use un ``DROP TABLE IF EXISTS`` y un ``CREATE TABLE`` para eliminar y crear la misma tabla, pero vacía.
