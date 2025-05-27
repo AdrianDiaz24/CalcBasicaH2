@@ -1,8 +1,8 @@
-package es.iesraprog2425.pruebaes.data.dao
+package es.iesraprog2425.pruebaes.service
 
 import es.iesraprog2425.pruebaes.model.Operacion
 
-interface IOperacionDAO {
+interface IOperacionService {
 
     fun getAll(): List<Operacion>
 
@@ -10,9 +10,9 @@ interface IOperacionDAO {
 
     fun getById(id: Int): Operacion?
 
-    fun add(operacion: Operacion)
+    fun add(producto: Operacion)
 
-    fun update(operacion: Operacion, id: Int)
+    fun update(producto: Operacion, id: Int)
 
     fun delete(id: Int)
 
